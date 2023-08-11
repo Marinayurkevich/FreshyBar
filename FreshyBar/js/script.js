@@ -2,26 +2,73 @@ const API_URL = 'https://tall-chivalrous-impala.glitch.me/';
 
 
 const getData = async () => {
-    const response = await fetch(API_URL + 'api/goods');
+    // const response = await fetch(API_URL + 'api/goods');
+    const response = await fetch(`${API_URL}api/goods`);
     const data = await response.json();
     return data;
-
 }
+
+const createCard = (item) => {
+    console.log(item);
+    const cocktail = document.createElement('article');
+    cocktail.classList.add('cocktail');
+    cocktail.innerHTML = `
+    <img class="cocktail__img" src="${API_URL}${item.image}" alt="strawberry">
+                            <div class="cocktail__content">
+                                <div class="cocktail__text">
+                                    <h3 class="cocktail__title">${item.title}</h3>
+                                    <p class="cocktail__price text-red">${item.price}</p>
+                                    <p class="cocktail__size">${item.size}</p>
+                                </div>
+                                <button class="btn cocktail__btn data-id="${item.id}"">Добавить</button>
+                            </div>
+    `
+    return cocktail;
+}
+
+const modalController = ({ modal, btnOpen, time }) => {
+    const buttonElem = document.querySelector(btnOpen);
+    const modalElem = document.querySelector(modal);
+
+    modalElem.style.cssText = `
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity ${time}ms ease-in-out;
+    `
+
+    const openModal = () => {
+        modalElem.style.visibility = "visible";
+        modalElem.style.opacity = 1;
+    }
+
+
+    const closeModal = () => {
+        modalElem.style.opacity = 0;
+        setTimeout(() => {
+            modalElem.style.visibility = "hidden";
+        }, time)
+    }
+    buttonElem.addEventListener('click', openModal);
+    modalElem.addEventListener('click', closeModal);
+    return { openModal, closeModal };
+}
+
+
+
+
 const init = async () => {
+    modalController({ modal: '.modal_order', btnOpen: '.header__btn-order' });
     const goodsListElem = document.querySelector(".goods__list");
     const data = await getData();
     console.log(data);
-
     const cartsCocktail = data.map((item) => {
         const li = document.createElement('li');
         li.classList.add("goods__item");
-        li.textContent = item.title;
+        li.append(createCard(item));
         return li;
-        // console.log(li);
     });
-
     goodsListElem.append(...cartsCocktail);
 }
 
 init();
-
