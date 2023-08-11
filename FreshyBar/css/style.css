@@ -33,6 +33,7 @@
 
 html {
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 *,
@@ -49,6 +50,7 @@ body {
     background: #F8E8E2 url("../img/bg.svg") no-repeat;
     background-position: top;
     background-size: contain;
+    /* contain расстягивает по самому длинному размеру */
     color: #000;
 }
 
@@ -113,6 +115,7 @@ fieldset {
 .header__btns {
     display: block;
     align-items: center;
+    /* gap: 32px; */
 }
 
 .header__btn-order {
@@ -148,8 +151,11 @@ fieldset {
 /* фону position: relative, чтобы сработал position: absolute для картинки стаканчика  */
 .hero__cup {
     position: relative;
-    width: 100%;    
-    aspect-ratio: 1/1;   
+    /* width: 380px; */
+    width: 100%;
+    /* соотношение сторон */
+    aspect-ratio: 1/1;
+    /* height: 382px; */
     border-radius: 24px;
 }
 
@@ -161,12 +167,14 @@ fieldset {
     position: absolute;
     bottom: 13%;
     width: 55%;
+    /* выравнивание стаканчика по центру фона  */
     left: 50%;
     transform: translateX(-50%);
 }
 
 .hero__cup_orange {
     background: #FFB72A;
+    /* выравнивание по верху только для одного элемента */
     align-self: flex-start;
     margin-top: -70px;
 }
@@ -236,6 +244,8 @@ fieldset {
 }
 
 .cocktail__size {
+    /* первый ноль - элементу неьзя сжиматься, второй ноль - неьзя расширяться, 
+    соответствует flex-grow: 0; flex-shrink: 0; flex-basis: 100%; */
     flex: 0 0 100%;
     font-size: 12px;
     font-weight: 600;
@@ -245,7 +255,8 @@ fieldset {
 }
 
 .cocktail__btn {
-   margin-top: auto;
+    /* указывается для того, чтобы все кнопки "Добавить" в ряду имели одинаковый (max) отступ сверху, в случае если название какого-нибудь коктейля будет длинное */
+    margin-top: auto;
 }
 
 
@@ -257,9 +268,11 @@ fieldset {
 }
 
 .footer__container {
-    display: grid;   
+    display: grid;
+    /* grid-template-columns: 1fr, 1fr; */
     grid-template-columns: repeat(1, 1fr);
-    gap: 40px;    
+    gap: 40px;
+    /* "строка" - здесь две строки, точка означает, что ничего не будет там */
     grid-template-areas:
         "logo ."
         "copyright developer";
@@ -288,6 +301,7 @@ fieldset {
     margin-bottom: 0px;
 }
 
+/* .footer__developer-link {} */
 
 /* корзина */
 .modal {
@@ -302,6 +316,7 @@ fieldset {
 }
 
 .modal__main {
+    /* сделать блок по центру */
     margin: auto;
     cursor: default;
     width: 100%;
@@ -383,8 +398,10 @@ fieldset {
 }
 
 .order__item-price {
-    grid-area: price;    
-    justify-self: end;    
+    grid-area: price;
+    /* выравнивание по правому краю */
+    justify-self: end;
+    /* выравнивание снизу */
     align-self: end;
 }
 
@@ -424,7 +441,8 @@ fieldset {
 }
 
 .order_submit {
-    justify-self: end;   
+    justify-self: end;
+    /* выравнивание по правому краю */
     grid-column: 2/3;
 }
 
@@ -519,6 +537,7 @@ fieldset {
     }
 
     .goods__list {
+        /* grid-template-columns: repeat(4, 140px); */
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
         gap: 16px;
     }
@@ -543,7 +562,8 @@ fieldset {
     }
 
     .cocktail__title {
-       flex: 0 0 100%;
+        /* название коктейля занимает всю строку */
+        flex: 0 0 100%;
     }
 
     .cocktail__size {
