@@ -43,6 +43,11 @@ html {
 }
 
 body {
+    /* overflow: hidden; */
+    /* TODO */
+    /* с этими свойствами не работает в crome, в firefox работает */
+    /* min-width: 320px; */
+    /* min-width: 100vh; */
     font-family: Mulish, sans-serif;
     font-size: 18px;
     font-weight: 400;
@@ -226,6 +231,8 @@ fieldset {
 }
 
 .cocktail__text {
+    /* выравнивание по верхнему краю */
+    /* align-items: flex-start; */
     margin-bottom: 10px;
     gap: 2px 5px;
     display: grid;
@@ -301,7 +308,6 @@ fieldset {
     margin-bottom: 0px;
 }
 
-/* .footer__developer-link {} */
 
 /* корзина */
 .modal {
@@ -320,11 +326,16 @@ fieldset {
     margin: auto;
     cursor: default;
     width: 100%;
-    max-width: 780px;
 }
 
 
+.modal__main_order {
+    max-width: 780px;
+}
 
+.modal__main_make {
+    max-width: 640px;
+}
 
 
 .order {
@@ -446,6 +457,100 @@ fieldset {
     grid-column: 2/3;
 }
 
+
+.make {
+    border-radius: 24px;
+    background-color: #F8E8E2;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    padding: 60px 40px;
+}
+
+.make__title {
+    font-size: 44px;
+    font-weight: 900;
+    margin-bottom: 40px;
+}
+
+.make__form {
+    display: flex;
+    flex-direction: column;
+}
+
+.make__fieldset {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.make__fieldset_ingredients {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px 55px;
+    margin-bottom: 32px;
+}
+
+.make__fieldset_topping {
+    width: 150px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.make__fieldset_cup {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.make__footer {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.make__legend {
+    color: #D5B4A8;
+    margin-bottom: 24px;
+}
+
+
+.make__upsale {
+    color: #D5B4A8;
+    font-size: 12px;
+}
+
+
+.make__wrap-add {
+    margin-bottom: 40px;
+    display: flex;
+    gap: 55px;
+}
+
+.make__add_btn {
+    min-width: 232px;
+}
+
+.make__total {}
+
+.make__total-price {
+    font-weight: 600;
+}
+
+.make__total-size {
+    color: #D5B4A8;
+    text-align: right;
+    font-size: 12px;
+}
+
+.checkbox {
+
+}
+
+.checkbox__input {}
+
+.radio {}
+
+.radio__input {}
 
 
 

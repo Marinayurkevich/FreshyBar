@@ -100,6 +100,8 @@ const init = async () => {
     // при нажатии на кнопку с классом header__btn-order, открывается элемент с классом modal_order
     modalController({ modal: '.modal_order', btnOpen: '.header__btn-order' });
 
+    modalController({ modal: '.modal_make', btnOpen: '.cocktail__btn_make' });
+
 
     const goodsListElem = document.querySelector(".goods__list");
     const data = await getData();
