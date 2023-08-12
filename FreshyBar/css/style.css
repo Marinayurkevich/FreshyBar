@@ -543,10 +543,65 @@ fieldset {
 }
 
 .checkbox {
+    position: relative;
+    display: block;
+    padding-left: 32px;
+    line-height: 24px;
+    cursor: pointer;
 
 }
 
-.checkbox__input {}
+.checkbox__input {
+    position: absolute;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    margin-left: -32px;
+}
+
+
+.checkbox__input:before {
+    content: '';
+    position: absolute;
+    /* занимает все пространство, растягивается на всю ширину */
+    inset: 0;
+    display: block;
+    border-radius: 2px;
+    background-color: #FFF;
+}
+
+.checkbox__input:after {
+    content: '';
+    position: absolute;
+    /* выравнивание по центру */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 15px;
+    background-image: url("../img/checkbox.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.checkbox__input:hover:before {
+    background-color: #F6F6F6;
+}
+
+.checkbox__input:checked:after {
+    opacity: 1;
+}
+
+.checkbox__input:focus:before {
+    border: 1px solid #D5B4A8;
+}
+
+.checkbox__input:focus-visible {
+    outline: none;
+}
+
 
 .radio {}
 
