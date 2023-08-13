@@ -1,5 +1,18 @@
 const API_URL = 'https://tall-chivalrous-impala.glitch.me/';
 
+const price = {
+    Клубника: 60,
+    Банан: 50,
+    Манго: 70,
+    Киви: 55,
+    Яблоко: 45,
+    Маракуйа: 90,
+    Мята: 50,
+    Лёд: 10,
+    Пластиковый: 0,
+    Биоралагаемый: 20,
+}
+
 
 const getData = async () => {
     // const response = await fetch(API_URL + 'api/goods');
@@ -9,7 +22,7 @@ const getData = async () => {
 }
 
 const createCard = (item) => {
-    console.log(item);
+    // console.log(item);
     const cocktail = document.createElement('article');
     cocktail.classList.add('cocktail');
     cocktail.innerHTML = `
@@ -20,7 +33,7 @@ const createCard = (item) => {
                                     <p class="cocktail__price text-red">${item.price}</p>
                                     <p class="cocktail__size">${item.size}</p>
                                 </div>
-                                <button class="btn cocktail__btn data-id="${item.id}"">Добавить</button>
+                                <button class="btn cocktail__btn cocktail__btn_add data-id="${item.id}"">Добавить</button>
                             </div>
     `
     return cocktail;
@@ -52,7 +65,7 @@ const scrollService = {
 
 
 const modalController = ({ modal, btnOpen, time }) => {
-    const buttonElem = document.querySelector(btnOpen);
+    const buttonElems = document.querySelectorAll(btnOpen);
     const modalElem = document.querySelector(modal);
 
     modalElem.style.cssText = `
@@ -85,14 +98,78 @@ const modalController = ({ modal, btnOpen, time }) => {
         scrollService.disabledScroll();
     };
 
-    buttonElem.addEventListener('click', openModal);
+
+    buttonElems.forEach(buttonElem => {
+        // console.log(buttonElem);
+        buttonElem.addEventListener('click', openModal);
+    })
+
     modalElem.addEventListener('click', closeModal);
 
     // возвращаем объект, т.к. если прсто перечислить функции, то вернется только последняя
     return { openModal, closeModal };
 }
 
+const getFormData = (form) => {
+    const formData = new FormData(form);
+    const data = {};
+    // console.log("formData  ", formData.getAll("ingredients"));
+    for (const [name, value] of formData.entries()) {
+        if (data[name]) {
+            if (!Array.isArray(data[name])) {
+                data[name] = [data[name]];
+            }
+            data[name].push(value)
+        } else {
+            data[name] = value;
+        }
+    }
+    // console.log(data);
+    return data;
+}
 
+
+const calculateTotalPrice = (form, startPrice) => {
+    let totalPrice = startPrice;
+    const data = getFormData(form);
+    if (Array.isArray(data.ingredients)) {
+        data.ingredients.forEach(item => {
+            totalPrice += price[item] || 0;
+        })
+    } else {
+        totalPrice += price[data.ingredients] || 0;
+    }
+
+    if (Array.isArray(data.topping)) {
+        data.topping.forEach(item => {
+            totalPrice += price[item] || 0;
+        })
+    } else {
+        totalPrice += price[data.topping] || 0;
+    }
+
+    totalPrice += price[data.cup] || 0;
+    console.log(totalPrice);
+    return totalPrice;
+}
+
+const calculateMakeYourOwwn = () => {
+    const formMakeOwn = document.querySelector('.make__form_make-your-own');
+    // const makeInputPrice = formMakeOwn.querySelector('.make__input_price');
+    const makeInputPrice = document.querySelector('.make__input_price');
+    const makeTotalPrice = document.querySelector('.make__total-price');
+
+    const handlerChange = () => {
+        const totalPrice = calculateTotalPrice(formMakeOwn, 150);
+        // value - т.к это input
+        makeInputPrice.value = totalPrice;
+        // textContent - т.к это p
+        makeTotalPrice.textContent = `${totalPrice} ₽`;
+    };
+
+    formMakeOwn.addEventListener('change', handlerChange);
+    handlerChange();
+}
 
 
 const init = async () => {
@@ -100,12 +177,13 @@ const init = async () => {
     // при нажатии на кнопку с классом header__btn-order, открывается элемент с классом modal_order
     modalController({ modal: '.modal_order', btnOpen: '.header__btn-order' });
 
-    modalController({ modal: '.modal_make', btnOpen: '.cocktail__btn_make' });
+    calculateMakeYourOwwn();
 
+    modalController({ modal: '.modal_make-your-own', btnOpen: '.cocktail__btn_make' });
 
     const goodsListElem = document.querySelector(".goods__list");
     const data = await getData();
-    console.log(data);
+    // console.log(data);
 
     const cartsCocktail = data.map((item) => {
         const li = document.createElement('li');
@@ -114,8 +192,9 @@ const init = async () => {
         li.append(createCard(item));
         return li;
     });
-
     goodsListElem.append(...cartsCocktail);
+
+    modalController({ modal: '.modal_add', btnOpen: '.cocktail__btn_add' });
 }
 
 init();
