@@ -10,7 +10,7 @@ const price = {
     Мята: 50,
     Лёд: 10,
     Пластиковый: 0,
-    Биоралагаемый: 20,
+    Биоразлагаемый: 20,
 }
 
 
@@ -139,23 +139,23 @@ const calculateTotalPrice = (form, startPrice) => {
     let totalPrice = startPrice;
     const data = getFormData(form);
     if (Array.isArray(data.ingredients)) {
-        data.ingredients.forEach(item => {
+        data.ingredients.forEach((item) => {
             totalPrice += price[item] || 0;
-        })
+        });
     } else {
         totalPrice += price[data.ingredients] || 0;
     }
 
     if (Array.isArray(data.topping)) {
-        data.topping.forEach(item => {
+        data.topping.forEach((item) => {
             totalPrice += price[item] || 0;
-        })
+        });
     } else {
         totalPrice += price[data.topping] || 0;
     }
-
+    
     totalPrice += price[data.cup] || 0;
-    console.log(totalPrice);
+    
     return totalPrice;
 }
 
@@ -182,6 +182,7 @@ const calculateAdd = () => {
     const formAdd = document.querySelector('.make__form_add');
     const makeTitle = modalAdd.querySelector('.make__title');
     const makeInputTitle = modalAdd.querySelector('.make__input-title');
+    const makeInputStartPrice = modalAdd.querySelector('.make__input-start-price');
     const makeInputPrice = modalAdd.querySelector('.make__input-price');
     const makeTotalPrice = modalAdd.querySelector('.make__total-price');
     const makeInputSize = modalAdd.querySelector('.make__input-size');
@@ -189,9 +190,9 @@ const calculateAdd = () => {
 
 
     const handlerChange = () => {
-        const totalPrice = calculateTotalPrice(formAdd, formAdd.price.value);
-        makeInputPrice.value = data.price;
-        makeTotalPrice.innerHTML = `${data.price}`;
+        const totalPrice = calculateTotalPrice(formAdd, +makeInputStartPrice.value);
+        makeInputPrice.value = totalPrice;
+        makeTotalPrice.textContent = `${totalPrice} ₽`;
     }
 
     formAdd.addEventListener('change', handlerChange);
@@ -199,6 +200,7 @@ const calculateAdd = () => {
     const fillInForm = (data) => {
         makeTitle.textContent = data.title;
         makeInputTitle.value = data.title;
+        makeInputStartPrice.value = data.price;
         makeInputPrice.value = data.price;
 
         // используем innerHTML вместо textContent, т.к используем непрерывный пробел &nbsp;
@@ -207,6 +209,7 @@ const calculateAdd = () => {
         makeInputSize.value = data.size;
         makeTotalSize.textContent = data.size;
         console.log(data);
+        handlerChange();
     }
 
     const resetForm = () => {
