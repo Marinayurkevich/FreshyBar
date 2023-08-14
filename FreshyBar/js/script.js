@@ -190,7 +190,8 @@ const calculateAdd = () => {
 
     const handlerChange = () => {
         const totalPrice = calculateTotalPrice(formAdd, formAdd.price.value);
-        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!НЕДОПИСАНО, 19 мин видео Форма с коктейлем. ПРОВЕРИТЬ ВЕРСТКУ
+        makeInputPrice.value = data.price;
+        makeTotalPrice.innerHTML = `${data.price}`;
     }
 
     formAdd.addEventListener('change', handlerChange);
