@@ -33,7 +33,7 @@ const createCard = (item) => {
                                     <p class="cocktail__price text-red">${item.price}</p>
                                     <p class="cocktail__size">${item.size}</p>
                                 </div>
-                                <button class="btn cocktail__btn cocktail__btn_add data-id="${item.id}"">Добавить</button>
+                                <button class="btn cocktail__btn cocktail__btn_add" data-id="${item.id}">Добавить</button>
                             </div>
     `
     return cocktail;
@@ -64,7 +64,7 @@ const scrollService = {
 };
 
 
-const modalController = ({ modal, btnOpen, time }) => {
+const modalController = ({ modal, btnOpen, time = 300, open, close }) => {
     const buttonElems = document.querySelectorAll(btnOpen);
     const modalElem = document.querySelector(modal);
 
@@ -86,12 +86,18 @@ const modalController = ({ modal, btnOpen, time }) => {
             setTimeout(() => {
                 modalElem.style.visibility = "hidden";
                 scrollService.enabledScroll();
+                if (close) {
+                    close();
+                }
             }, time);
             window.removeEventListener('keydown', closeModal);
         }
     }
 
-    const openModal = () => {
+    const openModal = (e) => {
+        if (open) {
+            open({ btn: e.target });
+        }
         modalElem.style.visibility = "visible";
         modalElem.style.opacity = 1;
         window.addEventListener('keydown', closeModal);
@@ -171,6 +177,47 @@ const calculateMakeYourOwwn = () => {
     handlerChange();
 }
 
+const calculateAdd = () => {
+    const modalAdd = document.querySelector('.modal_add');
+    const formAdd = document.querySelector('.make__form_add');
+    const makeTitle = modalAdd.querySelector('.make__title');
+    const makeInputTitle = modalAdd.querySelector('.make__input-title');
+    const makeInputPrice = modalAdd.querySelector('.make__input-price');
+    const makeTotalPrice = modalAdd.querySelector('.make__total-price');
+    const makeInputSize = modalAdd.querySelector('.make__input-size');
+    const makeTotalSize = modalAdd.querySelector('.make__total-size');
+
+
+    const handlerChange = () => {
+        const totalPrice = calculateTotalPrice(formAdd, formAdd.price.value);
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!НЕДОПИСАНО, 19 мин видео Форма с коктейлем. ПРОВЕРИТЬ ВЕРСТКУ
+    }
+
+    formAdd.addEventListener('change', handlerChange);
+
+    const fillInForm = (data) => {
+        makeTitle.textContent = data.title;
+        makeInputTitle.value = data.title;
+        makeInputPrice.value = data.price;
+
+        // используем innerHTML вместо textContent, т.к используем непрерывный пробел &nbsp;
+        makeTotalPrice.innerHTML = `${data.price}&nbsp;₽`;
+
+        makeInputSize.value = data.size;
+        makeTotalSize.textContent = data.size;
+        console.log(data);
+    }
+
+    const resetForm = () => {
+        makeTitle.textContent = "";
+        makeTotalPrice.textContent = "";
+        makeTotalSize.textContent = "";
+        // для очистки всех value в форме
+        formAdd.reset();
+    }
+
+    return { fillInForm, resetForm };
+}
 
 const init = async () => {
     //корзина
@@ -194,7 +241,20 @@ const init = async () => {
     });
     goodsListElem.append(...cartsCocktail);
 
-    modalController({ modal: '.modal_add', btnOpen: '.cocktail__btn_add' });
+
+    const { fillInForm, resetForm } = calculateAdd();
+
+    modalController({
+        modal: '.modal_add',
+        btnOpen: '.cocktail__btn_add',
+        open({ btn }) {
+            const id = btn.dataset.id;
+            // data - получаем с сервера
+            const item = data.find(item => item.id.toString() === id);
+            fillInForm(item);
+        },
+        close: resetForm,
+    });
 }
 
 init();

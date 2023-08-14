@@ -292,7 +292,7 @@
                                 Биоразлагаемый<span class="make__upsale">(+20&nbsp;₽)</span>
                             </label>
                             <label class="label make__label radio">
-                                <input class="radio__input" type="radio" name="cup" value="Пластиковый">
+                                <input class="radio__input" type="radio" checked name="cup" value="Пластиковый">
                                 Пластиковый<span class="make__upsale">(+0&nbsp;₽)</span>
                             </label>
                         </fieldset>
@@ -300,7 +300,7 @@
 
                     <div class="make__footer">
                         <button class="btn make__add_btn" type="submit">Добавить</button>
-
+                        <input class="make__input make__input_price" type="hidden" name="price">
                         <div class="make__total">
                             <p class="make__total-price text-red">340&nbsp;₽</p>
                             <p class="make__total-size">300мл</p>
@@ -317,7 +317,9 @@
         <div class="modal__main modal__main_make">
             <div class="make">
                 <h3 class="make__title">Банановый <span class="text-red">смузи</span></h3>
+
                 <form class="make__form make__form_add">
+                    <input class="make__input-title" type="text" name="title">
                     <div class="make__wrap-add">
                         <fieldset class="make__fieldset make__fieldset_topping">
                             <legend class="make__legend">Дополнительно</legend>
@@ -338,7 +340,7 @@
                                 Биоразлагаемый<span class="make__upsale">(+20&nbsp;₽)</span>
                             </label>
                             <label class="label make__label radio">
-                                <input class="radio__input" type="radio" name="cup" value="Пластиковый">
+                                <input class="radio__input" type="radio" name="cup" checked value="Пластиковый">
                                 Пластиковый<span class="make__upsale">(+0&nbsp;₽)</span>
                             </label>
                         </fieldset>
@@ -348,9 +350,11 @@
                         <button class="btn make__add_btn" type="submit">Добавить</button>
 
                         <div class="make__total">
-                            <input class="make__input make__input_price" type="hidden" name="price" value="150">
+                            
                             <p class="make__total-price text-red">340&nbsp;₽</p>
+                            <input class="make__input-price" type="text" name="price">                            
                             <p class="make__total-size">300мл</p>
+                            <input class="make__input-size" type="text" name="size">
                         </div>
                     </div>
 
