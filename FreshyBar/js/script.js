@@ -13,6 +13,30 @@ const price = {
     Биоразлагаемый: 20,
 }
 
+const cartDataControol = {
+    get() {
+        // добавляем || '[]', чтобы при первом входе (пустой корзине) не получить null 
+        return JSON.parse(localStorage.getItem("FreshyBarCart") || '[]');
+    },
+    add(item) {
+        const cartData = this.get();
+        item.idls = Math.random().toString(36).substring(2, 8);
+        cartData.push(item);
+        localStorage.setItem("FreshyBarCart", JSON.stringify(cartData));
+    },
+    remove(idls) {
+        const cartData = this.get();
+        const index = cartData.findIndex((item) => item.idls === idls);
+        // если не находит, возвращает -1
+        if (index !== -1) {
+            cartData.splice(index, 1);
+        }
+        localStorage.setItem("FreshyBarCart", JSON.stringify(cartData));
+    },
+    clear() {
+        localStorage.removeItem("FreshyBarCart");
+    }
+}
 
 const getData = async () => {
     // const response = await fetch(API_URL + 'api/goods');
@@ -153,27 +177,63 @@ const calculateTotalPrice = (form, startPrice) => {
     } else {
         totalPrice += price[data.topping] || 0;
     }
-    
+
     totalPrice += price[data.cup] || 0;
-    
+
     return totalPrice;
 }
 
+
+
+
+const formControl = (form, cb) => {
+    form.addEventListener("submit", (e) => {
+        // чтобы страница не перезагружалась
+        e.preventDefault();
+        const data = getData(form);
+        cartDataControol.add(data);
+        if (cb) {
+            cb();
+        }
+    });
+}
+
+
+
 const calculateMakeYourOwwn = () => {
-    const formMakeOwn = document.querySelector('.make__form_make-your-own');
+    const modalMakeOwn = document.querySelector('.modal_make-your-own');
+    const formMakeOwn = modalMakeOwn.querySelector('.make__form_make-your-own');
     // const makeInputPrice = formMakeOwn.querySelector('.make__input_price');
-    const makeInputPrice = document.querySelector('.make__input_price');
-    const makeTotalPrice = document.querySelector('.make__total-price');
+    const makeInputPrice = modalMakeOwn.querySelector('.make__input_price');
+    const makeTotalPrice = modalMakeOwn.querySelector('.make__total-price');
+    const makeInputTitle = modalMakeOwn.querySelector(".make__input-title");
+    const makeAddBtn = modalMakeOwn.querySelector(".make__add-btn");
 
     const handlerChange = () => {
         const totalPrice = calculateTotalPrice(formMakeOwn, 150);
         // value - т.к это input
+
+        const data = getFormData(formMakeOwn);
+        if (data.ingredients) {
+            const ingredients = Array.isArray(data.ingredients)
+                ? data.ingredients.join(", ")
+                : data.ingredients;
+
+            makeInputTitle.value = `Конструктор: ${ingredients}`;
+            makeAddBtn.disabled = false;
+        } else {
+            makeAddBtn.disabled = true;
+        }
+
+
+
         makeInputPrice.value = totalPrice;
         // textContent - т.к это p
         makeTotalPrice.textContent = `${totalPrice} ₽`;
     };
 
     formMakeOwn.addEventListener('change', handlerChange);
+    formControl(formMakeOwn);
     handlerChange();
 }
 
