@@ -105,7 +105,7 @@ const modalController = ({ modal, btnOpen, time = 300, open, close }) => {
         const code = event.code;
         // console.log(code);
         // code - клавиша, которая нажата на клавиатуре
-        if (target === modalElem || code === "Escape") {
+        if (event === 'close' || target === modalElem || code === "Escape") {
             modalElem.style.opacity = 0;
             setTimeout(() => {
                 modalElem.style.visibility = "hidden";
@@ -135,6 +135,9 @@ const modalController = ({ modal, btnOpen, time = 300, open, close }) => {
     })
 
     modalElem.addEventListener('click', closeModal);
+
+    modalElem.closeModal = closeModal;
+    modalElem.openModal = openModal;
 
     // возвращаем объект, т.к. если прсто перечислить функции, то вернется только последняя
     return { openModal, closeModal };
@@ -190,7 +193,7 @@ const formControl = (form, cb) => {
     form.addEventListener("submit", (e) => {
         // чтобы страница не перезагружалась
         e.preventDefault();
-        const data = getData(form);
+        const data = getFormData(form);
         cartDataControol.add(data);
         if (cb) {
             cb();
@@ -233,9 +236,19 @@ const calculateMakeYourOwwn = () => {
     };
 
     formMakeOwn.addEventListener('change', handlerChange);
-    formControl(formMakeOwn);
+    formControl(formMakeOwn, () => {
+        modalMakeOwn.closeModal("close");
+    });
     handlerChange();
-}
+
+    const resetForm = () => {
+        // makeTitle.textContent = "";
+        makeTotalPrice.textContent = "";
+        makeAddBtn.disabled = true;
+        formAdd.reset();
+    }
+    return { resetForm };
+};
 
 const calculateAdd = () => {
     const modalAdd = document.querySelector('.modal_add');
@@ -256,6 +269,10 @@ const calculateAdd = () => {
     }
 
     formAdd.addEventListener('change', handlerChange);
+    formControl(formAdd, () => {
+        modalAdd.closest('close')
+    })
+
 
     const fillInForm = (data) => {
         makeTitle.textContent = data.title;
@@ -288,9 +305,9 @@ const init = async () => {
     // при нажатии на кнопку с классом header__btn-order, открывается элемент с классом modal_order
     modalController({ modal: '.modal_order', btnOpen: '.header__btn-order' });
 
-    calculateMakeYourOwwn();
+    const { resetForm: resetFormMakeYourOwn } = calculateMakeYourOwwn();
 
-    modalController({ modal: '.modal_make-your-own', btnOpen: '.cocktail__btn_make' });
+    modalController({ modal: '.modal_make-your-own', btnOpen: '.cocktail__btn_make', close: resetFormMakeYourOwn, });
 
     const goodsListElem = document.querySelector(".goods__list");
     const data = await getData();
@@ -306,18 +323,19 @@ const init = async () => {
     goodsListElem.append(...cartsCocktail);
 
 
-    const { fillInForm, resetForm } = calculateAdd();
+    const { fillInForm: fillInFormAdd, resetForm: resetFormAdd } = calculateAdd();
 
     modalController({
         modal: '.modal_add',
         btnOpen: '.cocktail__btn_add',
+
         open({ btn }) {
             const id = btn.dataset.id;
             // data - получаем с сервера
             const item = data.find(item => item.id.toString() === id);
-            fillInForm(item);
+            fillInFormAdd(item);
         },
-        close: resetForm,
+        close: resetFormAdd,
     });
 }
 

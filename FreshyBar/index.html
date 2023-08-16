@@ -1,371 +1,343 @@
-<!DOCTYPE html>
-<html lang="en">
+const API_URL = 'https://tall-chivalrous-impala.glitch.me/';
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Freshy Bar</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="preload" as="font" href="fonts/mulish-v12-cyrillic_latin-600.woff2" type="font/woff2" crossorigin>
-    <link rel="preload" as="font" href="fonts/mulish-v12-cyrillic_latin-900.woff2" type="font/woff2" crossorigin>
-    <link rel="preload" as="font" href="fonts/mulish-v12-cyrillic_latin-regular.woff2" type="font/woff2" crossorigin>
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/script.js" defer></script> <!-- defer запускае script только после загрузки всей страницы -->
-</head>
+const price = {
+    Клубника: 60,
+    Банан: 50,
+    Манго: 70,
+    Киви: 55,
+    Яблоко: 45,
+    Маракуйа: 90,
+    Мята: 50,
+    Лёд: 10,
+    Пластиковый: 0,
+    Биоразлагаемый: 20,
+}
 
-<body>
-    <header class="header">
-        <div class="container header__container">
-            <img class="header__logo" src="img/logo.svg" alt="logo">
-            <div class="header__btns">
-                <button class="header__btn-order">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M8.24999 7.013V6C8.24999 5.00544 8.64508 4.05161 9.34834 3.34835C10.0516 2.64509 11.0054 2.25 12 2.25C12.9946 2.25 13.9484 2.64509 14.6516 3.34835C15.3549 4.05161 15.75 5.00544 15.75 6V7.013C17.047 7.05 17.837 7.183 18.442 7.68C19.272 8.36 19.502 9.514 19.965 11.823L20.565 14.823C21.229 18.143 21.561 19.803 20.661 20.902C19.76 22 18.067 22 14.68 22H9.31999C5.93399 22 4.23999 22 3.33999 20.902C2.43999 19.804 2.77199 18.144 3.43599 14.823L4.03599 11.823C4.49799 9.514 4.72899 8.36 5.55799 7.68C6.16399 7.184 6.954 7.05 8.251 7.013H8.24999ZM9.74999 6C9.74999 5.40326 9.98705 4.83097 10.409 4.40901C10.831 3.98705 11.4033 3.75 12 3.75C12.5967 3.75 13.169 3.98705 13.591 4.40901C14.0129 4.83097 14.25 5.40326 14.25 6V7H9.74999V6ZM15 11C15.2652 11 15.5196 10.8946 15.7071 10.7071C15.8946 10.5196 16 10.2652 16 10C16 9.73478 15.8946 9.48043 15.7071 9.29289C15.5196 9.10536 15.2652 9 15 9C14.7348 9 14.4804 9.10536 14.2929 9.29289C14.1054 9.48043 14 9.73478 14 10C14 10.2652 14.1054 10.5196 14.2929 10.7071C14.4804 10.8946 14.7348 11 15 11ZM9.99999 10C9.99999 10.2652 9.89464 10.5196 9.7071 10.7071C9.51957 10.8946 9.26521 11 8.99999 11C8.73478 11 8.48042 10.8946 8.29289 10.7071C8.10535 10.5196 7.99999 10.2652 7.99999 10C7.99999 9.73478 8.10535 9.48043 8.29289 9.29289C8.48042 9.10536 8.73478 9 8.99999 9C9.26521 9 9.51957 9.10536 9.7071 9.29289C9.89464 9.48043 9.99999 9.73478 9.99999 10Z"
-                            fill="black" />
-                    </svg>
-                </button>
-                <a href="#goods" class="btn header__btn">Заказать</a>
-            </div>
-        </div>
-    </header>
+const cartDataControol = {
+    get() {
+        // добавляем || '[]', чтобы при первом входе (пустой корзине) не получить null 
+        return JSON.parse(localStorage.getItem("FreshyBarCart") || '[]');
+    },
+    add(item) {
+        const cartData = this.get();
+        item.idls = Math.random().toString(36).substring(2, 8);
+        cartData.push(item);
+        localStorage.setItem("FreshyBarCart", JSON.stringify(cartData));
+    },
+    remove(idls) {
+        const cartData = this.get();
+        const index = cartData.findIndex((item) => item.idls === idls);
+        // если не находит, возвращает -1
+        if (index !== -1) {
+            cartData.splice(index, 1);
+        }
+        localStorage.setItem("FreshyBarCart", JSON.stringify(cartData));
+    },
+    clear() {
+        localStorage.removeItem("FreshyBarCart");
+    }
+}
 
-    <main>
-        <section class="hero">
-            <div class="container">
-                <h2 class="hero__title">Выбери свой <span class="text-red">освежающий</span> фреш</h2>
-                <div class="hero__cups">
-                    <div class="hero__cup hero__cup_pink">
-                        <img class="hero__img" src="img/pink.png" alt="pink cup">
-                    </div>
-                    <div class="hero__cup hero__cup_orange">
-                        <img class="hero__img" src="img/orange.png" alt="orange cup">
-                    </div>
-                    <div class="hero__cup hero__cup_green">
-                        <img class="hero__img" src="img/green.png" alt="green cup">
-                    </div>
+const getData = async () => {
+    // const response = await fetch(API_URL + 'api/goods');
+    const response = await fetch(`${API_URL}api/goods`);
+    const data = await response.json();
+    return data;
+}
 
-                </div>
-            </div>
-        </section>
-        <section class="goods" id="goods">
-            <div class="container">
-                <h2 class="goods__title">Меню</h2>
-                <ul class="goods__list">
-                    <li class="goods__item">
-                        <article class="goods_card cocktail">
-                            <img class="cocktail__img" src="img/make_your_own.jpg" alt="your_own_cocktail">
+const createCard = (item) => {
+    // console.log(item);
+    const cocktail = document.createElement('article');
+    cocktail.classList.add('cocktail');
+    cocktail.innerHTML = `
+    <img class="cocktail__img" src="${API_URL}${item.image}" alt="strawberry">
                             <div class="cocktail__content">
                                 <div class="cocktail__text">
-                                    <h3 class="cocktail__title">Собери сам</h3>
-                                    <p class="cocktail__price text-red">260 ₽</p>
-                                    <p class="cocktail__size">300мл</p>
+                                    <h3 class="cocktail__title">${item.title}</h3>
+                                    <p class="cocktail__price text-red">${item.price}</p>
+                                    <p class="cocktail__size">${item.size}</p>
                                 </div>
-                                <button class="btn cocktail__btn cocktail__btn_make">Добавить</button>
+                                <button class="btn cocktail__btn cocktail__btn_add" data-id="${item.id}">Добавить</button>
                             </div>
-                        </article>
-                    </li>
-                    <!-- <li class="goods__item">
-                        <article class="cocktail">
-                            <img class="cocktail__img" src="img/strawberry.jpg" alt="strawberry">
-                            <div class="cocktail__content">
-                                <div class="cocktail__text">
-                                    <h3 class="cocktail__title">Клубника</h3>
-                                    <p class="cocktail__price text-red">270 ₽</p>
-                                    <p class="cocktail__size">300мл</p>
-                                </div>
-                                <button class="btn cocktail__btn">Добавить</button>
-                            </div>
-                        </article>
-                    </li>
-                    <li class="goods__item">
-                        <article class="cocktail">
-                            <img class="cocktail__img" src="img/wildberries.jpg" alt="wild berries">
-                            <div class="cocktail__content">
-                                <div class="cocktail__text">
-                                    <h3 class="cocktail__title">Лесные ягоды</h3>
-                                    <p class="cocktail__price text-red">280 ₽</p>
-                                    <p class="cocktail__size">300мл</p>
-                                </div>
-                                <button class="btn cocktail__btn">Добавить</button>
-                            </div>
-                        </article>
-                    </li>
-                    <li class="goods__item">
-                        <article class="cocktail">
-                            <img class="cocktail__img" src="img/lime.jpg" alt="lime">
-                            <div class="cocktail__content">
-                                <div class="cocktail__text">
-                                    <h3 class="cocktail__title">Лайм и мята</h3>
-                                    <p class="cocktail__price text-red">260 ₽</p>
-                                    <p class="cocktail__size">300мл</p>
-                                </div>
-                                <button class="btn cocktail__btn">Добавить</button>
-                            </div>
-                        </article>
-                    </li>
-                    <li class="goods__item">
-                        <article class="cocktail">
-                            <img class="cocktail__img" src="img/banana.jpg" alt="banana">
-                            <div class="cocktail__content">
-                                <div class="cocktail__text">
-                                    <h3 class="cocktail__title">Банан</h3>
-                                    <p class="cocktail__price text-red">260 ₽</p>
-                                    <p class="cocktail__size">300мл</p>
-                                </div>
-                                <button class="btn cocktail__btn">Добавить</button>
-                            </div>
-                        </article>
-                    </li>
-                    <li class="goods__item">
-                        <article class="cocktail">
-                            <img class="cocktail__img" src="img/kiwi.jpg" alt="kiwi and apple">
-                            <div class="cocktail__content">
-                                <div class="cocktail__text">
-                                    <h3 class="cocktail__title">Киви и яблоко</h3>
-                                    <p class="cocktail__price text-red">260 ₽</p>
-                                    <p class="cocktail__size">290мл</p>
-                                </div>
-                                <button class="btn cocktail__btn">Добавить</button>
-                            </div>
-                        </article>
-                    </li>
-                    <li class="goods__item">
-                        <article class="cocktail">
-                            <img class="cocktail__img" src="img/mango.jpg" alt="mango">
-                            <div class="cocktail__content">
-                                <div class="cocktail__text">
-                                    <h3 class="cocktail__title">Манго</h3>
-                                    <p class="cocktail__price text-red">260 ₽</p>
-                                    <p class="cocktail__size">380мл</p>
-                                </div>
-                                <button class="btn cocktail__btn">Добавить</button>
-                            </div>
-                        </article>
-                    </li>
-                    <li class="goods__item">
-                        <article class="cocktail">
-                            <img class="cocktail__img" src="img/passion_fruit.jpg" alt="passion fruit">
-                            <div class="cocktail__content">
-                                <div class="cocktail__text">
-                                    <h3 class="cocktail__title">Маракуйя</h3>
-                                    <p class="cocktail__price text-red">340 ₽</p>
-                                    <p class="cocktail__size">300мл</p>
-                                </div>
-                                <button class="btn cocktail__btn">Добавить</button>
-                            </div>
-                        </article>
-                    </li> -->
-                </ul>
-            </div>
-        </section>
-    </main>
+    `
+    return cocktail;
+}
 
-    <footer class="footer">
-        <div class="container footer__container">
-            <img class="footer__logo" src="img/logo.svg" alt="logo">
-            <p class="footer__copyright">© Freshy Bar, 2023</p>
-            <ul class="footer__developer">
-                <li class="footer__developer-item">Designer: Anastasia Ilina</li>
-                <li class="footer__developer-item">Developer: <a class="footer__developer-link"
-                        href="https://www.linkedin.com/in/marina-yurkevich-837598220/?locale=en_US"
-                        target="_blank">Marina Yurkevich</a></li>
-            </ul>
-        </div>
-    </footer>
+const scrollService = {
+    scrollPosition: 0,
+    disabledScroll() {
+        this.scrollPosition = window.scrollY;
+        document.documentElement.style.scrollBehavior = 'auto';
+        // console.log(this.scrollPosition);
+        document.body.style.cssText = `
+        overflow: hidden;
+        position: relative;        
+        top: -${this.scrollPosition}px;
+        left: 0;
+        height: 100vh;
+        weight: 100vw;
+        padding-right: ${window.innerWidth - document.body.offsetWidth}px;
+        `;
+    },
+    enabledScroll() {
+        document.body.style.cssText = "";
+        window.scroll({ top: this.scrollPosition });
+        // documentElement это html
+        document.documentElement.style.scrollBehavior = "";
+    },
+};
 
 
-    <!-- модальное окно корзины -->
-    <div class="modal modal_order">
-        <div class="modal__main modal__main_order">
-            <div class="order">
-                <h2 class="order__title">Корзина<sup class="text-red">(2)</sup></h2>
-                <ul class="order__list">
-                    <li class="order__item">
-                        <img class="order__img" src="img/make_your_own.jpg" alt="название коктейля">
-                        <div class="order__info">
-                            <h3 class="order__name">Манго смузи</h3>
-                            <ul>
-                                <li class="order_topping-item">300мл</li>
-                                <li class="order_topping-item">Биоразлагаемый стакан</li>
-                                <li class="order_topping-item">Лед</li>
-                                <li class="order_topping-item">Мята</li>
-                            </ul>
-                        </div>
-                        <button class="order_item-delete" aria-label="Удалить коктейль из корзины"></button>
-                        <p class="order__item-price">380&nbsp;₽</p>
-                    </li>
-                    <li class="order__item">
-                        <img class="order__img" src="img/kiwi.jpg" alt="название коктейля">
-                        <div class="order__info">
-                            <h3 class="order__name">Конструктор: банана, яблоко, киви</h3>
-                            <ul>
-                                <li class="order_topping-item">300мл</li>
-                                <li class="order_topping-item">Биоразлагаемый стакан</li>
-                                <li class="order_topping-item">Лед</li>
-                                <li class="order_topping-item">Мята</li>
-                            </ul>
-                        </div>
-                        <button class="order_item-delete" aria-label="Удалить коктейль из корзины"></button>
-                        <p class="order__item-price">520&nbsp;₽</p>
-                        <!-- &nbsp; - неразрывной пробел (чтоб валюта не переносилась на другую строку) -->
-                    </li>
-                </ul>
-                <div class="order__price">
-                    <p class="order__price-title">итого</p>
-                    <p class="order__total-price text-red">520&nbsp;₽</p>
-                </div>
+const modalController = ({ modal, btnOpen, time = 300, open, close }) => {
+    const buttonElems = document.querySelectorAll(btnOpen);
+    const modalElem = document.querySelector(modal);
 
-                <form class="order__form">
-                    <label class="order__label" for="">
-                        <input class="order__input" type="text" placeholder="Ваше имя">
-                    </label>
-                    <label class="order__label" for="">
-                        <input class="order__input" type="text" placeholder="Телефон">
-                    </label>
-                    <button class="order_submit btn">Заказать</button>
-                </form>
+    modalElem.style.cssText = `
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity ${time}ms ease-in-out;
+    `;
 
-            </div>
-        </div>
-    </div>
+    const closeModal = (event) => {
+        // нужен target - при нажатии на фон будет закрываться модальное окно, внутри окна можно будет работать (оно не будет закрываться при нажатии на элементы внутри окна)
+        const target = event.target;
+        const code = event.code;
+        // console.log(code);
+        // code - клавиша, которая нажата на клавиатуре
+        if (event === 'close' || target === modalElem || code === "Escape") {
+            modalElem.style.opacity = 0;
+            setTimeout(() => {
+                modalElem.style.visibility = "hidden";
+                scrollService.enabledScroll();
+                if (close) {
+                    close();
+                }
+            }, time);
+            window.removeEventListener('keydown', closeModal);
+        }
+    }
+
+    const openModal = (e) => {
+        if (open) {
+            open({ btn: e.target });
+        }
+        modalElem.style.visibility = "visible";
+        modalElem.style.opacity = 1;
+        window.addEventListener('keydown', closeModal);
+        scrollService.disabledScroll();
+    };
 
 
-    <!-- модальное окно для заказов -->
+    buttonElems.forEach(buttonElem => {
+        // console.log(buttonElem);
+        buttonElem.addEventListener('click', openModal);
+    })
 
-    <div class="modal modal_make-your-own">
-        <div class="modal__main modal__main_make">
-            <div class="make">
-                <h3 class="make__title">Собери <span class="text-red">свой</span> смузи</h3>
-                <form class="make__form make__form_make-your-own">
-                    <input class="make__input-title" type="text" name="title">
-                    <fieldset class="make__fieldset make__fieldset_ingredients">
+    modalElem.addEventListener('click', closeModal);
 
-                        <label class="label make__label checkbox">
-                            <input class="checkbox__input" type="checkbox" name="ingredients" value="Клубника">
-                            Клубника
-                        </label>
+    modalElem.closeModal = closeModal;
+    modalElem.openModal = openModal;
 
-                        <label class="label make__label checkbox">
-                            <input class="checkbox__input" type="checkbox" name="ingredients" value="Киви">
-                            Киви
-                        </label>
+    // возвращаем объект, т.к. если прсто перечислить функции, то вернется только последняя
+    return { openModal, closeModal };
+}
 
-                        <label class="label make__label checkbox">
-                            <input class="checkbox__input" type="checkbox" name="ingredients" value="Банан">
-                            Банан
-                        </label>
-
-                        <label class="label make__label checkbox">
-                            <input class="checkbox__input" type="checkbox" name="ingredients" value="Маракуйа">
-                            Маракуйа
-                        </label>
-
-                        <label class="label make__label checkbox">
-                            <input class="checkbox__input" type="checkbox" name="ingredients" value="Манго">
-                            Манго
-                        </label>
-
-                        <label class="label make__label checkbox">
-                            <input class="checkbox__input" type="checkbox" name="ingredients" value="Яблоко">
-                            Яблоко
-                        </label>
-                    </fieldset>
-
-                    <div class="make__wrap-add">
-                        <fieldset class="make__fieldset make__fieldset_topping">
-                            <legend class="make__legend">Дополнительно</legend>
-                            <label class="label make__label checkbox">
-                                <input class="checkbox__input" type="checkbox" name="topping" value="Мята">
-                                Мята<span class="make__upsale">(+50&nbsp;₽)</span>
-                            </label>
-                            <label class="label make__label checkbox">
-                                <input class="checkbox__input" type="checkbox" name="topping" value="Лёд">
-                                Лёд<span class="make__upsale">(+10&nbsp;₽)</span>
-                            </label>
-                        </fieldset>
-
-                        <fieldset class="make__fieldset make__fieldset_cup">
-                            <legend class="make__legend">Стакан</legend>
-                            <label class="label make__label radio">
-                                <input class="radio__input" type="radio" name="cup" value="Биоразлагаемый">
-                                Биоразлагаемый<span class="make__upsale">(+20&nbsp;₽)</span>
-                            </label>
-                            <label class="label make__label radio">
-                                <input class="radio__input" type="radio" checked name="cup" value="Пластиковый">
-                                Пластиковый<span class="make__upsale">(+0&nbsp;₽)</span>
-                            </label>
-                        </fieldset>
-                    </div>
-
-                    <div class="make__footer">
-                        <button class="btn make__add-btn" type="submit">Добавить</button>
-                        <input class="make__input make__input_price" type="hidden" name="price">
-                        <div class="make__total">
-                            <p class="make__total-price text-red">340&nbsp;₽</p>
-                            <p class="make__total-size">300мл</p>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    </div>
+const getFormData = (form) => {
+    const formData = new FormData(form);
+    const data = {};
+    // console.log("formData  ", formData.getAll("ingredients"));
+    for (const [name, value] of formData.entries()) {
+        if (data[name]) {
+            if (!Array.isArray(data[name])) {
+                data[name] = [data[name]];
+            }
+            data[name].push(value)
+        } else {
+            data[name] = value;
+        }
+    }
+    // console.log(data);
+    return data;
+}
 
 
-    <div class="modal modal_add">
-        <div class="modal__main modal__main_make">
-            <div class="make">
-                <h3 class="make__title">Банановый <span class="text-red">смузи</span></h3>
+const calculateTotalPrice = (form, startPrice) => {
+    let totalPrice = startPrice;
+    const data = getFormData(form);
+    if (Array.isArray(data.ingredients)) {
+        data.ingredients.forEach((item) => {
+            totalPrice += price[item] || 0;
+        });
+    } else {
+        totalPrice += price[data.ingredients] || 0;
+    }
 
-                <form class="make__form make__form_add">
-                    <input class="make__input-title" type="hidden" name="title">
-                    <div class="make__wrap-add">
-                        <fieldset class="make__fieldset make__fieldset_topping">
-                            <legend class="make__legend">Дополнительно</legend>
-                            <label class="label make__label checkbox">
-                                <input class="checkbox__input" type="checkbox" name="topping" value="Мята">
-                                Мята<span class="make__upsale">(+50&nbsp;₽)</span>
-                            </label>
-                            <label class="label make__label checkbox">
-                                <input class="checkbox__input" type="checkbox" name="topping" value="Лёд">
-                                Лёд<span class="make__upsale">(+10&nbsp;₽)</span>
-                            </label>
-                        </fieldset>
+    if (Array.isArray(data.topping)) {
+        data.topping.forEach((item) => {
+            totalPrice += price[item] || 0;
+        });
+    } else {
+        totalPrice += price[data.topping] || 0;
+    }
 
-                        <fieldset class="make__fieldset make__fieldset_cup">
-                            <legend class="make__legend">Стакан</legend>
-                            <label class="label make__label radio">
-                                <input class="radio__input" type="radio" name="cup" value="Биоразлагаемый">
-                                Биоразлагаемый<span class="make__upsale">(+20&nbsp;₽)</span>
-                            </label>
-                            <label class="label make__label radio">
-                                <input class="radio__input" type="radio" name="cup" checked value="Пластиковый">
-                                Пластиковый<span class="make__upsale">(+0&nbsp;₽)</span>
-                            </label>
-                        </fieldset>
-                    </div>
+    totalPrice += price[data.cup] || 0;
 
-                    <div class="make__footer">
-                        <button class="btn make__add-btn" type="submit">Добавить</button>
-
-                        <div class="make__total">
-                            <input class="make__input-start-price" type="hidden">
-                            <p class="make__total-price text-red">340&nbsp;₽</p>
-                            <input class="make__input-price" type="hidden" name="price">
-                            <p class="make__total-size">300мл</p>
-                            <input class="make__input-size" type="hidden" name="size">
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-        </div>
-    </div>
+    return totalPrice;
+}
 
 
 
-</body>
 
-</html>
+const formControl = (form, cb) => {
+    form.addEventListener("submit", (e) => {
+        // чтобы страница не перезагружалась
+        e.preventDefault();
+        const data = getFormData(form);
+        cartDataControol.add(data);
+        if (cb) {
+            cb();
+        }
+    });
+}
+
+
+
+const calculateMakeYourOwwn = () => {
+    const modalMakeOwn = document.querySelector('.modal_make-your-own');
+    const formMakeOwn = modalMakeOwn.querySelector('.make__form_make-your-own');
+    // const makeInputPrice = formMakeOwn.querySelector('.make__input_price');
+    const makeInputPrice = modalMakeOwn.querySelector('.make__input_price');
+    const makeTotalPrice = modalMakeOwn.querySelector('.make__total-price');
+    const makeInputTitle = modalMakeOwn.querySelector(".make__input-title");
+    const makeAddBtn = modalMakeOwn.querySelector(".make__add-btn");
+
+    const handlerChange = () => {
+        const totalPrice = calculateTotalPrice(formMakeOwn, 150);
+        // value - т.к это input
+
+        const data = getFormData(formMakeOwn);
+        if (data.ingredients) {
+            const ingredients = Array.isArray(data.ingredients)
+                ? data.ingredients.join(", ")
+                : data.ingredients;
+
+            makeInputTitle.value = `Конструктор: ${ingredients}`;
+            makeAddBtn.disabled = false;
+        } else {
+            makeAddBtn.disabled = true;
+        }
+
+
+
+        makeInputPrice.value = totalPrice;
+        // textContent - т.к это p
+        makeTotalPrice.textContent = `${totalPrice} ₽`;
+    };
+
+    formMakeOwn.addEventListener('change', handlerChange);
+    formControl(formMakeOwn, () => {
+        modalMakeOwn.closeModal("close");
+    });
+    handlerChange();
+
+    const resetForm = () => {
+        // makeTitle.textContent = "";
+        makeTotalPrice.textContent = "";
+        makeAddBtn.disabled = true;
+        formAdd.reset();
+    }
+    return { resetForm };
+};
+
+const calculateAdd = () => {
+    const modalAdd = document.querySelector('.modal_add');
+    const formAdd = document.querySelector('.make__form_add');
+    const makeTitle = modalAdd.querySelector('.make__title');
+    const makeInputTitle = modalAdd.querySelector('.make__input-title');
+    const makeInputStartPrice = modalAdd.querySelector('.make__input-start-price');
+    const makeInputPrice = modalAdd.querySelector('.make__input-price');
+    const makeTotalPrice = modalAdd.querySelector('.make__total-price');
+    const makeInputSize = modalAdd.querySelector('.make__input-size');
+    const makeTotalSize = modalAdd.querySelector('.make__total-size');
+
+
+    const handlerChange = () => {
+        const totalPrice = calculateTotalPrice(formAdd, +makeInputStartPrice.value);
+        makeInputPrice.value = totalPrice;
+        makeTotalPrice.textContent = `${totalPrice} ₽`;
+    }
+
+    formAdd.addEventListener('change', handlerChange);
+    formControl(formAdd, () => {
+        modalAdd.closest('close')
+    })
+
+
+    const fillInForm = (data) => {
+        makeTitle.textContent = data.title;
+        makeInputTitle.value = data.title;
+        makeInputStartPrice.value = data.price;
+        makeInputPrice.value = data.price;
+
+        // используем innerHTML вместо textContent, т.к используем непрерывный пробел &nbsp;
+        makeTotalPrice.innerHTML = `${data.price}&nbsp;₽`;
+
+        makeInputSize.value = data.size;
+        makeTotalSize.textContent = data.size;
+        console.log(data);
+        handlerChange();
+    }
+
+    const resetForm = () => {
+        makeTitle.textContent = "";
+        makeTotalPrice.textContent = "";
+        makeTotalSize.textContent = "";
+        // для очистки всех value в форме
+        formAdd.reset();
+    }
+
+    return { fillInForm, resetForm };
+}
+
+const init = async () => {
+    //корзина
+    // при нажатии на кнопку с классом header__btn-order, открывается элемент с классом modal_order
+    modalController({ modal: '.modal_order', btnOpen: '.header__btn-order' });
+
+    const { resetForm: resetFormMakeYourOwn } = calculateMakeYourOwwn();
+
+    modalController({ modal: '.modal_make-your-own', btnOpen: '.cocktail__btn_make', close: resetFormMakeYourOwn, });
+
+    const goodsListElem = document.querySelector(".goods__list");
+    const data = await getData();
+    // console.log(data);
+
+    const cartsCocktail = data.map((item) => {
+        const li = document.createElement('li');
+        li.classList.add("goods__item");
+        // li.textContent = item.title;
+        li.append(createCard(item));
+        return li;
+    });
+    goodsListElem.append(...cartsCocktail);
+
+
+    const { fillInForm: fillInFormAdd, resetForm: resetFormAdd } = calculateAdd();
+
+    modalController({
+        modal: '.modal_add',
+        btnOpen: '.cocktail__btn_add',
+
+        open({ btn }) {
+            const id = btn.dataset.id;
+            // data - получаем с сервера
+            const item = data.find(item => item.id.toString() === id);
+            fillInFormAdd(item);
+        },
+        close: resetFormAdd,
+    });
+}
+
+init();
+
