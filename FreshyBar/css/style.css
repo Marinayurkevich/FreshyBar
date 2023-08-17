@@ -194,6 +194,71 @@ fieldset {
     background: #34B905;
 }
 
+.hero__container {
+    position: relative;
+}
+
+.decor {
+    position: absolute;
+    /* растягивание по всей ширине */
+    inset: 0;
+}
+
+/* все элементы привязаны к decor, т.к. decor absolute */
+.decor__img {
+    position: absolute;
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.decor__img_01 {
+    width: 223px;
+    height: 214px;
+    background-image: url("../img/strawberry.png");
+    filter: drop-shadow(0px 10px 30px rgba(164, 7, 2, 0.50));
+}
+
+.decor__img_02 {
+    width: 180px;
+    height: 147px;
+    background: url("../img/blackberry.png");
+    filter: drop-shadow(0px 4px 20px rgba(17, 7, 108, 0.50));
+}
+
+.decor__img_03 {
+    width: 46px;
+    height: 41px;
+    background: url("../img/sea_buckthorn.png");
+    filter: drop-shadow(0px 4px 20px rgba(223, 97, 15, 0.40));
+}
+
+.decor__img_04 {
+    width: 46px;
+    height: 41px;
+    background: url("../img/sea​_buckthorn.png");
+    filter: drop-shadow(0px 4px 20px rgba(223, 97, 15, 0.40));
+}
+
+.decor__img_05 {
+    width: 109px;
+    height: 114px;
+    background: url("../img/blueberry.png");
+    filter: drop-shadow(0px 4px 20px rgba(1, 30, 82, 0.50));
+}
+
+.decor__img_06 {
+    width: 223px;
+    height: 214px;
+    background: url("../img/strawberry.png");
+    /* box-shadow изменили на filter */
+    filter: drop-shadow(0px 10px 30px rgba(164, 7, 2, 0.50));
+    /* отражение по горизонтали */
+    transform: scaleX(-1);
+}
+
+
+
 
 
 /*goods*/
@@ -612,6 +677,8 @@ fieldset {
 .radio {}
 
 .radio__input {}
+
+
 
 
 
